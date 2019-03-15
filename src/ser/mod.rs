@@ -34,13 +34,13 @@ impl<W: Write, O: Options> Serializer<W, O> {
 impl<'a, W: Write, O: Options> serde::Serializer for &'a mut Serializer<W, O> {
     type Ok = ();
     type Error = Error;
-    type SerializeSeq = Compound<'a, W, O>;
-    type SerializeTuple = Compound<'a, W, O>;
-    type SerializeTupleStruct = Compound<'a, W, O>;
-    type SerializeTupleVariant = Compound<'a, W, O>;
-    type SerializeMap = Compound<'a, W, O>;
-    type SerializeStruct = Compound<'a, W, O>;
-    type SerializeStructVariant = Compound<'a, W, O>;
+    type SerializeSeq = Self;
+    type SerializeTuple = Self;
+    type SerializeTupleStruct = Self;
+    type SerializeTupleVariant = Self;
+    type SerializeMap = Self;
+    type SerializeStruct = Self;
+    type SerializeStructVariant = Self;
 
     fn serialize_unit(self) -> Result<()> {
         Ok(())
@@ -155,11 +155,11 @@ impl<'a, W: Write, O: Options> serde::Serializer for &'a mut Serializer<W, O> {
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
         let len = try!(len.ok_or(ErrorKind::SequenceMustHaveLength));
         try!(self.serialize_u64(len as u64));
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_tuple_struct(
@@ -167,7 +167,7 @@ impl<'a, W: Write, O: Options> serde::Serializer for &'a mut Serializer<W, O> {
         _name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_tuple_variant(
@@ -178,17 +178,17 @@ impl<'a, W: Write, O: Options> serde::Serializer for &'a mut Serializer<W, O> {
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
         try!(self.serialize_u32(variant_index));
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap> {
         let len = try!(len.ok_or(ErrorKind::SequenceMustHaveLength));
         try!(self.serialize_u64(len as u64));
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_struct_variant(
@@ -199,7 +199,7 @@ impl<'a, W: Write, O: Options> serde::Serializer for &'a mut Serializer<W, O> {
         _len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         try!(self.serialize_u32(variant_index));
-        Ok(Compound { ser: self })
+        Ok(self)
     }
 
     fn serialize_newtype_struct<T: ?Sized>(self, _name: &'static str, value: &T) -> Result<()>
@@ -259,13 +259,13 @@ impl<O: Options> SizeChecker<O> {
 impl<'a, O: Options> serde::Serializer for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
-    type SerializeSeq = SizeCompound<'a, O>;
-    type SerializeTuple = SizeCompound<'a, O>;
-    type SerializeTupleStruct = SizeCompound<'a, O>;
-    type SerializeTupleVariant = SizeCompound<'a, O>;
-    type SerializeMap = SizeCompound<'a, O>;
-    type SerializeStruct = SizeCompound<'a, O>;
-    type SerializeStructVariant = SizeCompound<'a, O>;
+    type SerializeSeq = Self;
+    type SerializeTuple = Self;
+    type SerializeTupleStruct = Self;
+    type SerializeTupleVariant = Self;
+    type SerializeMap = Self;
+    type SerializeStruct = Self;
+    type SerializeStructVariant = Self;
 
     fn serialize_unit(self) -> Result<()> {
         Ok(())
@@ -359,11 +359,11 @@ impl<'a, O: Options> serde::Serializer for &'a mut SizeChecker<O> {
         let len = try!(len.ok_or(ErrorKind::SequenceMustHaveLength));
 
         try!(self.serialize_u64(len as u64));
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_tuple_struct(
@@ -371,7 +371,7 @@ impl<'a, O: Options> serde::Serializer for &'a mut SizeChecker<O> {
         _name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_tuple_variant(
@@ -382,18 +382,18 @@ impl<'a, O: Options> serde::Serializer for &'a mut SizeChecker<O> {
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
         try!(self.add_value(variant_index));
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap> {
         let len = try!(len.ok_or(ErrorKind::SequenceMustHaveLength));
 
         try!(self.serialize_u64(len as u64));
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_struct_variant(
@@ -404,7 +404,7 @@ impl<'a, O: Options> serde::Serializer for &'a mut SizeChecker<O> {
         _len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         try!(self.add_value(variant_index));
-        Ok(SizeCompound { ser: self })
+        Ok(self)
     }
 
     fn serialize_newtype_struct<V: serde::Serialize + ?Sized>(
@@ -440,11 +440,7 @@ impl<'a, O: Options> serde::Serializer for &'a mut SizeChecker<O> {
     }
 }
 
-pub(crate) struct Compound<'a, W: 'a, O: Options + 'a> {
-    ser: &'a mut Serializer<W, O>,
-}
-
-impl<'a, W, O> serde::ser::SerializeSeq for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeSeq for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -457,7 +453,7 @@ where
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -466,7 +462,7 @@ where
     }
 }
 
-impl<'a, W, O> serde::ser::SerializeTuple for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeTuple for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -479,7 +475,7 @@ where
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -488,7 +484,7 @@ where
     }
 }
 
-impl<'a, W, O> serde::ser::SerializeTupleStruct for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeTupleStruct for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -501,7 +497,7 @@ where
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -510,7 +506,7 @@ where
     }
 }
 
-impl<'a, W, O> serde::ser::SerializeTupleVariant for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeTupleVariant for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -523,7 +519,7 @@ where
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -532,7 +528,7 @@ where
     }
 }
 
-impl<'a, W, O> serde::ser::SerializeMap for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeMap for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -545,7 +541,7 @@ where
     where
         K: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -553,7 +549,7 @@ where
     where
         V: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -562,7 +558,7 @@ where
     }
 }
 
-impl<'a, W, O> serde::ser::SerializeStruct for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeStruct for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -575,7 +571,7 @@ where
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -584,7 +580,7 @@ where
     }
 }
 
-impl<'a, W, O> serde::ser::SerializeStructVariant for Compound<'a, W, O>
+impl<'a, W, O> serde::ser::SerializeStructVariant for &'a mut Serializer<W, O>
 where
     W: Write,
     O: Options,
@@ -597,7 +593,7 @@ where
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -606,11 +602,7 @@ where
     }
 }
 
-pub(crate) struct SizeCompound<'a, S: Options + 'a> {
-    ser: &'a mut SizeChecker<S>,
-}
-
-impl<'a, O: Options> serde::ser::SerializeSeq for SizeCompound<'a, O> {
+impl<'a, O: Options> serde::ser::SerializeSeq for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -619,7 +611,7 @@ impl<'a, O: Options> serde::ser::SerializeSeq for SizeCompound<'a, O> {
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -628,7 +620,7 @@ impl<'a, O: Options> serde::ser::SerializeSeq for SizeCompound<'a, O> {
     }
 }
 
-impl<'a, O: Options> serde::ser::SerializeTuple for SizeCompound<'a, O> {
+impl<'a, O: Options> serde::ser::SerializeTuple for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -637,7 +629,7 @@ impl<'a, O: Options> serde::ser::SerializeTuple for SizeCompound<'a, O> {
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -646,7 +638,7 @@ impl<'a, O: Options> serde::ser::SerializeTuple for SizeCompound<'a, O> {
     }
 }
 
-impl<'a, O: Options> serde::ser::SerializeTupleStruct for SizeCompound<'a, O> {
+impl<'a, O: Options> serde::ser::SerializeTupleStruct for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -655,7 +647,7 @@ impl<'a, O: Options> serde::ser::SerializeTupleStruct for SizeCompound<'a, O> {
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -664,7 +656,7 @@ impl<'a, O: Options> serde::ser::SerializeTupleStruct for SizeCompound<'a, O> {
     }
 }
 
-impl<'a, O: Options> serde::ser::SerializeTupleVariant for SizeCompound<'a, O> {
+impl<'a, O: Options> serde::ser::SerializeTupleVariant for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -673,7 +665,7 @@ impl<'a, O: Options> serde::ser::SerializeTupleVariant for SizeCompound<'a, O> {
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -682,7 +674,7 @@ impl<'a, O: Options> serde::ser::SerializeTupleVariant for SizeCompound<'a, O> {
     }
 }
 
-impl<'a, O: Options + 'a> serde::ser::SerializeMap for SizeCompound<'a, O> {
+impl<'a, O: Options + 'a> serde::ser::SerializeMap for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -691,7 +683,7 @@ impl<'a, O: Options + 'a> serde::ser::SerializeMap for SizeCompound<'a, O> {
     where
         K: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -699,7 +691,7 @@ impl<'a, O: Options + 'a> serde::ser::SerializeMap for SizeCompound<'a, O> {
     where
         V: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -708,7 +700,7 @@ impl<'a, O: Options + 'a> serde::ser::SerializeMap for SizeCompound<'a, O> {
     }
 }
 
-impl<'a, O: Options> serde::ser::SerializeStruct for SizeCompound<'a, O> {
+impl<'a, O: Options> serde::ser::SerializeStruct for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -717,7 +709,7 @@ impl<'a, O: Options> serde::ser::SerializeStruct for SizeCompound<'a, O> {
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
@@ -726,7 +718,7 @@ impl<'a, O: Options> serde::ser::SerializeStruct for SizeCompound<'a, O> {
     }
 }
 
-impl<'a, O: Options> serde::ser::SerializeStructVariant for SizeCompound<'a, O> {
+impl<'a, O: Options> serde::ser::SerializeStructVariant for &'a mut SizeChecker<O> {
     type Ok = ();
     type Error = Error;
 
@@ -735,7 +727,7 @@ impl<'a, O: Options> serde::ser::SerializeStructVariant for SizeCompound<'a, O> 
     where
         T: serde::ser::Serialize,
     {
-        value.serialize(&mut *self.ser)
+        value.serialize(&mut **self)
     }
 
     #[inline]
