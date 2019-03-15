@@ -735,37 +735,11 @@ impl<'a, O: Options> serde::ser::SerializeStructVariant for &'a mut SizeChecker<
         Ok(())
     }
 }
-const TAG_CONT: u8 = 0b1000_0000;
-const TAG_TWO_B: u8 = 0b1100_0000;
-const TAG_THREE_B: u8 = 0b1110_0000;
-const TAG_FOUR_B: u8 = 0b1111_0000;
-const MAX_ONE_B: u32 = 0x80;
-const MAX_TWO_B: u32 = 0x800;
-const MAX_THREE_B: u32 = 0x10000;
 
 fn encode_utf8(c: char) -> EncodeUtf8 {
-    let code = c as u32;
     let mut buf = [0; 4];
-    let pos = if code < MAX_ONE_B {
-        buf[3] = code as u8;
-        3
-    } else if code < MAX_TWO_B {
-        buf[2] = (code >> 6 & 0x1F) as u8 | TAG_TWO_B;
-        buf[3] = (code & 0x3F) as u8 | TAG_CONT;
-        2
-    } else if code < MAX_THREE_B {
-        buf[1] = (code >> 12 & 0x0F) as u8 | TAG_THREE_B;
-        buf[2] = (code >> 6 & 0x3F) as u8 | TAG_CONT;
-        buf[3] = (code & 0x3F) as u8 | TAG_CONT;
-        1
-    } else {
-        buf[0] = (code >> 18 & 0x07) as u8 | TAG_FOUR_B;
-        buf[1] = (code >> 12 & 0x3F) as u8 | TAG_CONT;
-        buf[2] = (code >> 6 & 0x3F) as u8 | TAG_CONT;
-        buf[3] = (code & 0x3F) as u8 | TAG_CONT;
-        0
-    };
-    EncodeUtf8 { buf: buf, pos: pos }
+    let pos = c.encode_utf8(&mut buf).len();
+    EncodeUtf8 { buf, pos }
 }
 
 struct EncodeUtf8 {
@@ -775,6 +749,6 @@ struct EncodeUtf8 {
 
 impl EncodeUtf8 {
     fn as_slice(&self) -> &[u8] {
-        &self.buf[self.pos..]
+        &self.buf[0..self.pos]
     }
 }
