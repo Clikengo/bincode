@@ -12,7 +12,7 @@ use self::LimitOption::*;
 
 struct DefaultOptions(Infinite);
 
-pub(crate) trait Options {
+pub trait Options {
     type Limit: SizeLimit + 'static;
     type Endian: ByteOrder + 'static;
 

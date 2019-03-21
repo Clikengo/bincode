@@ -125,7 +125,7 @@ where
     seed.deserialize(&mut deserializer)
 }
 
-pub(crate) trait SizeLimit: Clone {
+pub trait SizeLimit: Clone {
     /// Tells the SizeLimit that a certain number of bytes has been
     /// read or written.  Returns Err if the limit has been exceeded.
     fn add(&mut self, n: u64) -> Result<()>;

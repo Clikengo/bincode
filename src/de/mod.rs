@@ -24,7 +24,7 @@ pub mod read;
 /// serde::Deserialize::deserialize(&mut deserializer);
 /// let bytes_read = d.bytes_read();
 /// ```
-pub(crate) struct Deserializer<R, O: Options> {
+pub struct Deserializer<R, O: Options> {
     reader: R,
     options: O,
 }
